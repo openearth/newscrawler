@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-# News-Crawler
 News crawler with visualizer
 
 In terminal
@@ -21,7 +19,3 @@ In terminal
   - scrapy crawl newsspider
 
 Visulization shows the found news items and current events with satellite images
-=======
-# News_Crawler
-Visualization of news events
->>>>>>> 0e1091947bfa03cd5c90a2cec27bafaccfa1be0c
