@@ -1,17 +1,16 @@
 # -*- coding: utf-8 -*-
-import logging
-
 from scrapy.spiders import XMLFeedSpider, Spider, CrawlSpider, Rule
-from scrapy.spiders import CrawlSpider, Rule
 import json
 import requests
-from xml.etree import ElementTree
 from sat.items import SatItem
 import datetime as dt
+import numpy as np
 
 start_urls = []
-tags  = np.loadtxt('tags.txt', dtype = str, delimiter = "\n")
-points =[]
+tags = np.loadtxt('tags.txt', dtype=str, delimiter="\n")
+points = []
+accesstoken = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
+
 
 class newsspider(XMLFeedSpider):
     name = 'newsspider'
@@ -24,41 +23,40 @@ class newsspider(XMLFeedSpider):
 
     def text_scan(self, description):
         text = description.split(" ")
-        textlist=[]
+        textlist = []
         for i in range(len(text)):
             for j in text[i]:
                 string = "..."
-                if j.isdigit() == True:
-                    for k in range(-4,4):
+                if j.isdigit():
+                    for k in range(-4, 4):
                         if ((i+k) >= 0) and ((i+k) < len(text)):
-                            string += text[i+k] +" "
+                            string += text[i+k] + " "
                     string += "..."
             if string != "...":
                 textlist.append(string)
         return textlist
 
-    def check_description(self,description,title):
+    def check_description(self, description, title):
         for t in tags:
             if t in description.lower() or t in title.lower():
                 return True
         return False
 
-    def parseFlood(self,text):
-	accesstoken = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
-        headers = {'X-AG-Access-Token' : accesstoken, 'Content-Type' : 'text/raw', 'outputformat' : 'text/n3'}
+    def parseFlood(self, text):
+        headers = {'X-AG-Access-Token': accesstoken, 'Content-Type': 'text/raw', 'outputformat': 'text/n3'}
         calais_url = 'https://api.thomsonreuters.com/permid/calais'
-        response = requests.post(calais_url,text, headers=headers, timeout = 80, verify = False)
-        content =  response.text
+        response = requests.post(calais_url, text, headers=headers, timeout=80, verify=False)
+        content = response.text
         content = content.encode('utf-8')
-        jsonfile =  json.loads(content)
-        lat,lon = 0,0
+        jsonfile = json.loads(content)
+        lat, lon = 0, 0
         for i in jsonfile:
             if 'http://d.opencalais.com/genericHasher-1/' in i:
                 if 'resolutions' in jsonfile[i]:
                     lat = jsonfile[i]['resolutions'][0]['latitude']
                     lon = jsonfile[i]['resolutions'][0]['longitude']
                     break
-        return lat,lon
+        return lat, lon
 
     def parse_node(self, response, selector):
         # General
@@ -66,7 +64,7 @@ class newsspider(XMLFeedSpider):
         description = self.text_scan(textstring[0])
         titlestring = selector.xpath('string(//item/title)').extract()
         item = SatItem()
-        keepItem = self.check_description(textstring[0],titlestring[0])
+        keepItem = self.check_description(textstring[0], titlestring[0])
 
         if keepItem:
             # Emm newsbrief
@@ -81,13 +79,13 @@ class newsspider(XMLFeedSpider):
                     lat1 = float(lat1)
 
                     # setting all the items
-                    item['latlon'] = str(lat1) ,str(lon1)
+                    item['latlon'] = str(lat1), str(lon1)
                     item['src'] = 'emmspider'
 
-            #Floodlist
+            #  Floodlist
             else:
-                lat,lon = self.parseFlood((textstring[0]+ titlestring[0]))
-                item['latlon'] =  str(lat) , str(lon)
+                lat, lon = self.parseFlood((textstring[0] + titlestring[0]))
+                item['latlon'] = str(lat), str(lon)
                 item['src'] = 'floodlist'
 
             item['itemTime'] = selector.xpath("string(//item/pubDate)").extract()

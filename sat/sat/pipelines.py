@@ -18,32 +18,33 @@ from geopy.distance import VincentyDistance
 # A filter that looks for duplicate items, and drops those items that were already processed.
 # Let’s say that our items have a unique id, but our spider returns multiples items with the same id:
 
+
 class DuplicatePipeline(object):
     def __init__(self):
-        #os.system('rm -rf items.jl=')
-        #os.system('echo. >items.jl')
+        #  os.system('rm -rf items.jl=')
+        #  os.system('echo. >items.jl')
         self.events = []
 
     def makePolygon(self, latlon):
         '''creating a polygon from the x and y coordinates and the area'''
         L = 150                                                             # 150 km by default
-        d = 0.5 * (np.sqrt(L**2  + L**2))                                   # distance from area
+        d = 0.5 * (np.sqrt(L**2 + L**2))                                   # distance from area
         b = [45, 135, 225, 315, 45]                                         # direction in degrees
         geostr = "POLYGON(("                                                # make a string for the polygon
         lat1, lon1 = latlon
-        for i in range (5):
+        for i in range(5):
             origin = geopy.Point(lat1, lon1)
-            destination = VincentyDistance(kilometers=d).destination(origin,b[i])
+            destination = VincentyDistance(kilometers=d).destination(origin, b[i])
             lat2, lon2 = destination.latitude, destination.longitude            # create four corners of polygon
             geostr += str(lon2) + ' ' + str(lat2)
             if i != 4:
                 geostr += ','
-        geostr = geostr + "))"
+        geostr += "))"
         return geostr
 
     def process_item(self, item, spider):
         count = 0
-        ids_seen = open('items.jl','r')
+        ids_seen = open('items.jl', 'r')
         data = ids_seen.readlines()
         for value in data:
             value = json.loads(value)
