@@ -58,3 +58,23 @@ docs/_build/
 
 # PyBuilder
 target/
+
+# has passwords
+settings.json
+scrapy.cfg
+
+# temp files
+items.jl
+dbs
+items
+*.pid
+
+
+node_modules
+dist
+.tmp
+.sass-cache
+bower_components
+test/bower_components
+
+

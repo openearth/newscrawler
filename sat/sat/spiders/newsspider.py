@@ -1,15 +1,33 @@
 # -*- coding: utf-8 -*-
-from scrapy.spiders import XMLFeedSpider, Spider, CrawlSpider, Rule
 import json
 import requests
 from sat.items import SatItem
 import datetime as dt
 import numpy as np
 
+from scrapy.spiders import XMLFeedSpider, Spider, CrawlSpider, Rule
+from scrapy.utils.conf import get_config
+
 start_urls = []
-tags = np.loadtxt('tags.txt', dtype=str, delimiter="\n")
+# some tags used in floods
+tags = [
+    "flood",
+    "hurricane",
+    "tsunami",
+    "heavy rainfall",
+    "overlast water",
+    "overstroming",
+    "inondation",
+    "flut",
+    "regenval",
+    "hevige neerslag",
+    "niederschlagsmenge",
+    "dike breakthrough",
+    "dijk doorbraak"
+]
+
 points = []
-accesstoken = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
+accesstoken = get_config().get('opencalais', 'token')
 
 
 class newsspider(XMLFeedSpider):

@@ -20,8 +20,9 @@ function addMap() {
     // var map = L.mapbox.map('map', 'siggyf.c74e2e04');
 
     map = L.map('map',{
-	minZoom : 2,
-	maxZoom : 7});
+        minZoom : 2,
+        maxZoom : 7
+    });
     map.setView([51.505, -0.09], 3);
     L.tileLayer(
         'http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png',
@@ -31,28 +32,28 @@ function addMap() {
     ).addTo(map);
     map.properties = {
         editing: false,
-        deleting: false,
-    }; 
-    
+        deleting: false
+    };
+
     // Initialise the FeatureGroup to store editable layers
     var editableLayers = new L.FeatureGroup();
     markers = new L.MarkerClusterGroup({
-	    iconCreateFunction: function (cluster) {
-		var childCount = cluster.getChildCount();
-		var c = ' marker-cluster-';
-		if (childCount < 10) {
-		    c += 'small';
-		} else if (childCount < 80) {
-		    c += 'medium';
-		} else {
-		    c += 'large';
-		}
-		markers.on('clusterclick', function (a) {
-		    console.log('cluster ' + a.layer.getAllChildMarkers()[1]);
+        iconCreateFunction: function (cluster) {
+            var childCount = cluster.getChildCount();
+            var c = ' marker-cluster-';
+            if (childCount < 10) {
+                c += 'small';
+            } else if (childCount < 80) {
+                c += 'medium';
+            } else {
+                c += 'large';
+            }
+            markers.on('clusterclick', function (a) {
+                console.log('cluster ' + a.layer.getAllChildMarkers()[1]);
 
-		});
-		return new L.DivIcon({ html: '<div><span><b>' + childCount + '</b></span></div>',      className: 'marker-cluster' + c, iconSize: new L.Point(40, 40) });	    }
-	});
+            });
+            return new L.DivIcon({ html: '<div><span><b>' + childCount + '</b></span></div>',      className: 'marker-cluster' + c, iconSize: new L.Point(40, 40) });	    }
+    });
     map.addLayer(editableLayers);
     map.addLayer(markers);
 
@@ -146,11 +147,4 @@ function addMap() {
 
         });
     });
-    
-    eventmarker.on('click', function(){
-        map.setZoom(7);
-        map.panto(eventmarker._latlngs)
-    });
-
 }
-

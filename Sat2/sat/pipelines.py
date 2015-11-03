@@ -61,7 +61,8 @@ class RabbitMQPipeline(object):
         # and a fanout exchange to notify listeners that we've crawled something
         channel.exchange_declare(
             'crisis_crawl',
-            type='fanout'
+            type='fanout',
+            durable=True
         )
         self.channel = channel
 

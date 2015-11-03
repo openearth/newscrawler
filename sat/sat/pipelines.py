@@ -21,8 +21,8 @@ from geopy.distance import VincentyDistance
 
 class DuplicatePipeline(object):
     def __init__(self):
-        #  os.system('rm -rf items.jl=')
-        #  os.system('echo. >items.jl')
+        with open("items.jl", "w") as f:
+            pass
         self.events = []
 
     def makePolygon(self, latlon):
@@ -56,7 +56,7 @@ class DuplicatePipeline(object):
                     count += 1
 
                 # number of news messages when it is considered an event
-                if count == 13:
+                if count == 8:
                     item['event'] = self.makePolygon(item['latlon']), item['latlon']
                     self.events.append(item['latlon'])
             # Check if date of the written item are within certain time, only than write them to the file and return
@@ -95,7 +95,8 @@ class RabbitMQPipeline(object):
         # and a fanout exchange to notify listeners that we've crawled something
         channel.exchange_declare(
             'crisis_crawl',
-            type='fanout'
+            type='fanout',
+            durable=True
         )
         self.channel = channel
 

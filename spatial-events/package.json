@@ -34,7 +34,8 @@
         },
         "globals": {
             "L": true,
-            "moment": true
+            "moment": true,
+            "_": true
         },
         "rules": {
             "quotes": [

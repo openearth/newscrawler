@@ -18,6 +18,5 @@ class SatItem(scrapy.Item):
     inputTime = scrapy.Field()
     itemTime = scrapy.Field()
     src = scrapy.Field()
+    # tuple of polygon + latlong for marker
     event = scrapy.Field()
-
-
